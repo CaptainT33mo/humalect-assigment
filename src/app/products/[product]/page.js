@@ -9,7 +9,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import StarRating from "../../../components/StarRating";
-import { discountPercentage } from "../../../utils/helpers";
+import { getDiscountPrice } from "../../../utils/helpers";
 
 export default function ProductDescription({ params }) {
   const { data, isLoading, isFetching, error } = useQuery({
@@ -24,7 +24,7 @@ export default function ProductDescription({ params }) {
     return product;
   };
 
-  const discountedPrice = discountPercentage(
+  const discountedPrice = getDiscountPrice(
     data?.price,
     data?.discountPercentage
   );
@@ -40,7 +40,7 @@ export default function ProductDescription({ params }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       {data?.id && (
-        <Card className="flex-row w-full max-w-[48rem]">
+        <Card className="flex-row w-full max-w-[48rem] pb-4">
           <CardHeader
             shadow={false}
             floated={false}
@@ -58,7 +58,7 @@ export default function ProductDescription({ params }) {
                 src={data.thumbnail}
                 alt={data.title}
                 width={500}
-                height={234}
+                height={500}
               />
             </div>
           </CardHeader>

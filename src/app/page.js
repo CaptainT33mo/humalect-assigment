@@ -7,6 +7,8 @@ import Pagination from "../components/Pagination";
 import Link from "next/link";
 import DefaultColumn from "../components/Table/DefaultColumn";
 import DiscountPrice from "../components/DiscountedPrice";
+import ProductCard from "@/components/ProductCard";
+import { getDiscountPrice } from "./../utils/helpers";
 
 const TABLE_HEAD = [
   { label: "Id", key: "id" },
@@ -35,91 +37,128 @@ export default function ProductsList() {
     return users;
   };
 
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
+
+  if (error) {
+    return <span>Error: {error.message}</span>;
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Card className="overflow-scroll h-full w-full">
-        <div className="">
-          <div className="flex gap-10">
+    <main className="flex min-h-screen flex-col items-center p-24">
+      <div className="flex items-center justify-between bg-white w-full rounded-xl rounded-b-none p-4">
+        <div className="flex items-center">
+          <Typography color="blue-gray" className="font-medium mr-3">
+            Layout
+          </Typography>
+          <div
+            className="flex gap-10"
+            onChange={(e) => setLayout(e.target.value)}
+          >
             <Radio
               id="table"
               name="type"
               label="Table"
               defaultChecked
-              value={layout}
-              onChange={(e) => setLayout(e.target.value)}
+              value="table"
             />
-            <Radio
-              id="card"
-              name="type"
-              label="Card"
-              value={layout}
-              onChange={(e) => setLayout(e.target.value)}
-            />
+            <Radio id="card" name="type" label="Card" value="card" />
           </div>
-          <Pagination
-            active={activePage}
-            setActive={setActivePage}
-            totalPages={data ? Math.max(data.total / data.limit) : 0}
-          />
         </div>
-        <div>
-          <table className="w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head.key}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
+        <Pagination
+          active={activePage}
+          setActive={setActivePage}
+          totalPages={data ? Math.max(data.total / data.limit) : 0}
+        />
+      </div>
+      {layout === "table" ? (
+        <Card className="overflow-auto h-full w-full rounded-t-none">
+          <div>
+            <table className="w-full min-w-max table-auto text-left">
+              <thead>
+                <tr>
+                  {TABLE_HEAD.map((head) => (
+                    <th
+                      key={head.key}
+                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                     >
-                      {head.label}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data?.products?.map(
-                ({ id, title, category, price, discountPercentage }, index) => {
-                  const isLast = index === data?.products?.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head.label}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data?.products?.map(
+                  (
+                    { id, title, category, price, discountPercentage },
+                    index
+                  ) => {
+                    const isLast = index === data?.products?.length - 1;
+                    const classes = isLast
+                      ? "p-4"
+                      : "p-4 border-b border-blue-gray-50";
 
-                  return (
-                    <tr key={id}>
-                      <td className={classes}>
-                        <DefaultColumn>{id}</DefaultColumn>
-                      </td>
-                      <td className={`${classes} bg-blue-gray-50/50`}>
-                        <DefaultColumn color="blue">
-                          <Link href={`/products/${id}`}>{title}</Link>
-                        </DefaultColumn>
-                      </td>
-                      <td className={classes}>
-                        <DefaultColumn>{category}</DefaultColumn>
-                      </td>
-                      <td className={`${classes} bg-blue-gray-50/50`}>
-                        <DefaultColumn color={"blue"}>${price}</DefaultColumn>
-                      </td>
-                      <td className={`${classes}`}>
-                        <DiscountPrice
-                          value={price}
-                          discountPercentage={discountPercentage}
-                        />
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
+                    return (
+                      <tr key={id}>
+                        <td className={classes}>
+                          <DefaultColumn>{id}</DefaultColumn>
+                        </td>
+                        <td className={`${classes} bg-blue-gray-50/50`}>
+                          <DefaultColumn color="blue">
+                            <Link href={`/products/${id}`}>{title}</Link>
+                          </DefaultColumn>
+                        </td>
+                        <td className={classes}>
+                          <DefaultColumn>{category}</DefaultColumn>
+                        </td>
+                        <td className={`${classes} bg-blue-gray-50/50`}>
+                          <DefaultColumn color={"blue"}>${price}</DefaultColumn>
+                        </td>
+                        <td className={`${classes}`}>
+                          <DiscountPrice
+                            value={price}
+                            discountPercentage={discountPercentage}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-5 gap-4 font-mono text-white text-sm text-center font-bold leading-6 bg-stripes-fuchsia rounded-lg mt-5">
+          {data?.products?.map(
+            ({ id, title, category, price, discountPercentage, thumbnail }) => {
+              const discountedPrice = getDiscountPrice(
+                price,
+                discountPercentage
+              );
+              return (
+                <Link key={id} href={`/products/${id}`}>
+                  <ProductCard
+                    id={id}
+                    title={title}
+                    category={category}
+                    price={price}
+                    discountedPrice={discountedPrice}
+                    image={thumbnail}
+                  />
+                </Link>
+              );
+            }
+          )}
         </div>
-      </Card>
+      )}
     </main>
   );
 }
