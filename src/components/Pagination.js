@@ -2,12 +2,7 @@ import React from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { HiArrowRight, HiArrowLeft } from "react-icons/hi";
 
-export default function Pagination({
-  active,
-  setActive,
-  //   onPageChange,
-  totalPages,
-}) {
+export default function Pagination({ active, setActive, totalPages }) {
   const getPageRange = () => {
     const range = [];
     const maxVisiblePages = 5;
@@ -40,7 +35,6 @@ export default function Pagination({
     color: active === index ? "blue" : "blue-gray",
     onClick: () => {
       setActive(index);
-      //   onPageChange(index);
     },
   });
 
@@ -48,14 +42,12 @@ export default function Pagination({
     if (active === totalPages) return;
 
     setActive(active + 1);
-    // onPageChange(active + 1);
   };
 
   const prev = () => {
     if (active === 1) return;
 
     setActive(active - 1);
-    // onPageChange(active - 1);
   };
 
   const renderPageButtons = () => {
