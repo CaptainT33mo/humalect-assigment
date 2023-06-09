@@ -41,7 +41,7 @@ export default function ProductsList() {
   const getProductsList = async (page, rows) => {
     const skip = (page - 1) * rows;
     const res = await fetch(
-      `https://dummyjson.com/products?limit=${rows}&skip=${skip}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/products?limit=${rows}&skip=${skip}`
     );
     const users = await res.json();
     return users;

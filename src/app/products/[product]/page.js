@@ -19,7 +19,9 @@ export default function ProductDescription({ params }) {
   });
 
   const getProductDescription = async () => {
-    const res = await fetch(`https://dummyjson.com/products/${params.product}`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${params.product}`
+    );
     const product = await res.json();
     return product;
   };
