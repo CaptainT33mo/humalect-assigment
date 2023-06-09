@@ -5,8 +5,6 @@ import {
   CardHeader,
   CardBody,
   Typography,
-  Button,
-  CardFooter,
 } from "@material-tailwind/react";
 
 function ProductCard({ image, price, id, category, discountedPrice, title }) {
