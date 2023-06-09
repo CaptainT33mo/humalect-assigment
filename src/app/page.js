@@ -66,10 +66,10 @@ export default function ProductsList() {
       <div className="flex items-center justify-between bg-white w-full rounded-xl rounded-b-none p-4">
         <div className="flex items-center">
           <Typography color="blue-gray" className="font-medium mr-3">
-            Layout
+            Layout:
           </Typography>
           <div
-            className="flex gap-10"
+            className="flex gap-5"
             onChange={(e) => setLayout(e.target.value)}
           >
             <Radio
@@ -154,7 +154,7 @@ export default function ProductsList() {
                           <DefaultColumn>{category}</DefaultColumn>
                         </td>
                         <td className={`${classes} bg-blue-gray-50/50`}>
-                          <DefaultColumn color={"blue"}>${price}</DefaultColumn>
+                          <DefaultColumn>${price}</DefaultColumn>
                         </td>
                         <td className={`${classes}`}>
                           <DiscountPrice
